@@ -1,5 +1,7 @@
 # SimpleTorrentUWP
 Some in-progress fork of Empyreal96/SimpleTorrentUWP project.  
+
+Min. os. build: 14393
   
 ## Current issues:  
 - Timeout exception when connecting to TCPClient with *any* torrent
@@ -9,7 +11,7 @@ Some in-progress fork of Empyreal96/SimpleTorrentUWP project.
 - Namespace change
 
 ## Referencies:
-  Https://github.Com/Empyreal96/SimpleTorrentUWP
+  Https://GitHub.Com/Empyreal96/SimpleTorrentUWP
 
  
 ##.
