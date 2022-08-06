@@ -1,15 +1,6 @@
 # SimpleTorrentUWP
-An in-progress fork of Rebirth\SimpleTorrent lib with fixes for UWP  
-  
-### Current issues:  
-- Timeout exception when connecting to TCPClient
 
-### Changes:  
-- Added use of StorageFile to allow access to files instead of hard paths  
-- Namespace change
-
-
-### Example Usage:
+## Example Usage:
  
  ```
  using SimpleTorrentUWP.Torrent
