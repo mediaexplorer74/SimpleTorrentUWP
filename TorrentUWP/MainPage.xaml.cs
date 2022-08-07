@@ -19,50 +19,31 @@ using SimpleTorrentUWP.Torrent;
 using Windows.Storage;
 
 // namespace
-
 namespace TorrentUWP
 {
     
     // class
     public sealed partial class MainPage : Page
     {
-        public static Client TorrentClient;
-
-        // constructor
+        public static Client TorrentClient; // single torrentclient
+        
         public MainPage()
         {
             this.InitializeComponent();
         }//
 
         // Alt . Debug
-
         void SuperWriteLine(string onestring)
         {
-
             ResponseBox.Items.Add(onestring);
-        }
+        }//SuperWriteLine
 
-        // Open Picker demo
-        private async void openButton_Click(object sender, RoutedEventArgs e)
+        // Picker handler
+        private async void ChooseButton_Click(object sender, RoutedEventArgs e)
         {
-            /*
-            FileOpenPicker openPicker = new FileOpenPicker();
-            openPicker.ViewMode = PickerViewMode.Thumbnail;
-            openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-            openPicker.CommitButtonText = "Choose XAP file";
-            openPicker.FileTypeFilter.Add(".xap");
-            var file = await openPicker.PickSingleFileAsync();
-
-            // check the file choosed or not
-            if (file != null)
-            {
-                // fulfill filePath
-                XapPathBox.Text = file.Path;
-            }
-            */
-
 
             // Open torrent file
+
             FileOpenPicker torrentFile = new FileOpenPicker();
             torrentFile.ViewMode = PickerViewMode.List;
             torrentFile.SuggestedStartLocation = PickerLocationId.Downloads;
@@ -70,166 +51,91 @@ namespace TorrentUWP
 
             StorageFile torrent = await torrentFile.PickSingleFileAsync();
             
+            // check if torrent file picking ok or not
             if (torrent == null)
             {
+                SuperWriteLine("Torrent file not choosed");
+                TorrentFilePath.Text = "Torrent file not choosed";
+
+                SuperWriteLine("Download folder not choosed");
+                DownloadFolderPath.Text = "Download folder not choosed";
+
                 return;
             }
             else
             {
+                SuperWriteLine("Torrent file path: " + torrent.Path);
+                TorrentFilePath.Text = torrent.Path;
+
+
                 //Select download folder
+
                 FolderPicker saveFolder = new FolderPicker();
                 saveFolder.SuggestedStartLocation = PickerLocationId.Downloads;
                 saveFolder.FileTypeFilter.Add(".");
                 StorageFolder DownloadFolder = await saveFolder.PickSingleFolderAsync();
-                
+
+                // check if download folder picking ok or not
                 if (DownloadFolder == null)
                 {
-                    SuperWriteLine("Torrent file not choosed");
+                    SuperWriteLine("Download folder not choosed");
+                    DownloadFolderPath.Text = "Download folder not choosed";
+
                     return;
                 }
                 else
-                {
+                {                   
+                    SuperWriteLine("Download Folder path: " + DownloadFolder.Path);
+                    DownloadFolderPath.Text = DownloadFolder.Path;
+
+
                     // Start the client/download
 
-                    SuperWriteLine("Port: 6881");
-                    SuperWriteLine("Torrent path: " + torrent.Path);
-                    SuperWriteLine("Download Folder path: " + DownloadFolder.Path);
-
-                    SuperWriteLine("Create Torrent Client...");
+                    SuperWriteLine("Create Torrent Client at port 6881...");
                     TorrentClient = new Client(6881, torrent.Path, DownloadFolder.Path);
 
                     SuperWriteLine("Load Torrent...");
                     await TorrentClient.loadTorrent(torrent, DownloadFolder.Path);
 
+                    int peerscount = TorrentClient.Peers.Count;
+                    SuperWriteLine("Peers Count: " + peerscount);
+
+                    int seederscount = TorrentClient.Seeders.Count;
+                    SuperWriteLine("Seeders Count: " + seederscount);
+
                     SuperWriteLine("Start...");
                     TorrentClient.Start();
 
-                    SuperWriteLine("Stop?...");
+
+                    peerscount = TorrentClient.Peers.Count;
+                    SuperWriteLine("Peers Count: " + peerscount);
+
+                    seederscount = TorrentClient.Seeders.Count;
+                    SuperWriteLine("Seeders Count: " + seederscount);
+
+                    // SuperWriteLine("Waiting?...");
                 }
             }
-        }//openButton_Click
+        }//ChooseButton_Click
 
 
-        // Win10 <-> WM10 Path sync (NOT READY YET!)
-        private void PathSync(string src)
+        // UpdatePeersAndSeedersInfo_Click
+        private void UpdatePeersAndSeedersInfo_Click(object sender, RoutedEventArgs e)
         {
-            // TODO
-        }
-
-        // Try to Start XAP Delpoy =)
-        private async void StartDeploy_Click(object sender, RoutedEventArgs e)
-        {
-            /*
-            openButton.IsEnabled = false;
-            saveButton.IsEnabled = false;
-
-            StringBuilder sb = new StringBuilder();
-            string Parameter1 = XapPathBox.Text;
-            string Parameter2;
-
-            string ipaddress = TelnetIP.Text;
-
-            int port = 23;
-
-            // TO DO
-            // IP address checking
-
-            try
+            if (TorrentClient != null)
             {
-                port = Int32.Parse(TelnetPort.Text);
-            }
-            catch (Exception E2)
-            {
-                SuperWriteLine("Error! Bad port: " + E2.Message);
-                openButton.IsEnabled = true;
-                saveButton.IsEnabled = true;
-                return;
-            }
+                int peerscount = TorrentClient.Peers.Count;
+                SuperWriteLine("Peers Count: " + peerscount);
 
-
-            // -- 1 -- 
-            //create TcpClient object 
-            telnetClient = new TcpClient();
-
-
-
-            //await telnetClient.ConnectAsync("192.168.1.33", 23);
-            try
-            {
-                SuperWriteLine("Trying to connect to  " + ipaddress + ":" + port);
-
-                // ERROR IF TRY FROM WM !!!
-                await telnetClient.ConnectAsync(ipaddress, port);
-            }
-            catch (Exception e1)
-            {
-                // DEBUG INFO
-                SuperWriteLine("Telnet connect error!\r\n Exception:  " + e1.Message);
-                openButton.IsEnabled = true;
-                saveButton.IsEnabled = true;
-                return;
-            }
-
-            try
-            {
-                var r = GetAnswer(telnetClient);
-                // DEBUG: get telnet echo
-                SuperWriteLine(r);
-            }
-            catch (Exception e2)
-            {
-                // DEBUG INFO
-                SuperWriteLine("Telnet data transfer error!\r\n Exception: " + e2.Message);
-                openButton.IsEnabled = true;
-                saveButton.IsEnabled = true;
-                return;
-            }
-
-
-
-            // --2 --  
-            // Parse parameters
-
-            if (toggleSwitch1.IsOn)
-            {
-                Parameter2 = "1";
+                int seederscount = TorrentClient.Seeders.Count;
+                SuperWriteLine("Seeders Count: " + seederscount);
             }
             else
             {
-                Parameter2 = "0";
+                SuperWriteLine("Peek torrent file and download folder at first");
             }
+        }//UpdatePeersAndSeedersInfo_Click
 
-            // send loginname
-            //SendCmd(telnetClient, "Sirepuser");
+    }//class end
 
-            // DEBUG: get telnet echo
-            //SuperWriteLine(GetAnswer(telnetClient));
-
-
-            // send password
-            //SendCmd(telnetClient, "1234");
-
-            // DEBUG: get telnet echo
-            //SuperWriteLine(GetAnswer(telnetClient));
-
-            // -- 3 --
-            // try to install xap
-            SendCmd(telnetClient, "xapinst " + Parameter1 + " " + Parameter2 + "\r\n");
-            SuperWriteLine("xapinst " + Parameter1 + " " + Parameter2);
-
-            // DEBUG: get telnet echo
-            SuperWriteLine(GetAnswer(telnetClient));
-
-
-            //SuperWriteLine("bb.xap must be installed (by xapinst.bat)");
-
-            //RnD
-            //telnetClient.Dispose();
-            openButton.IsEnabled = true;
-            saveButton.IsEnabled = true;
-            */
-
-        }// StartDelpoy_Click end
-
-    }
-}
+}//namespace end

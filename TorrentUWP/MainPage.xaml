@@ -10,8 +10,8 @@
 
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton x:Name="openButton" Label="File Picker (Experimental)" Icon="OpenFile" Click="openButton_Click" />
-            <AppBarButton x:Name="saveButton" Label="Start XAP Deploy" Icon="Admin" Click="StartDeploy_Click" />
+            <AppBarButton x:Name="ChooseButton" Label="Torrent file/Download folder Picker" Icon="OpenFile" Click="ChooseButton_Click" />
+        
         </CommandBar>
     </Page.BottomAppBar>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -24,57 +24,40 @@
             </TextBlock>
 
             <TextBlock x:Name="Label1">
-                FilePath (e.g. D:\test folder\aa bb.xap):
+                Torrent File Path (e.g. C:\test\torrent.torrent):
             </TextBlock>
-            <TextBox x:Name="XapPathBox" 
+            <TextBox x:Name="TorrentFilePath" 
                  Height="40" 
                  Width= "350"
                  Text= ""
                  BorderThickness="5"
                  HorizontalAlignment="Left"
-                 FontSize="14"
+                 FontSize="14" IsReadOnly="True"
              />
 
             <TextBlock x:Name="Label2">
-                Install mode:
+                Download Folder Path:
             </TextBlock>
-            <ToggleSwitch x:Name="toggleSwitch1" IsOn="False"
-         OffContent="Use Internal Storage (0)" OnContent="Use SD Card (1)"/>
-
-            <TextBlock x:Name="Label3">
-                Telnet IP (e.g. 192.168.1.33):
-            </TextBlock>
+            <TextBox x:Name="DownloadFolderPath" 
+                 Height="40" 
+                 Width= "350"
+                 Text= ""
+                 BorderThickness="5"
+                 HorizontalAlignment="Left"
+                 FontSize="14" IsReadOnly="True"
+             />
 
 
             <!-- Text= "192.168.1.33"  -->
-            <TextBox x:Name="TelnetIP" 
-                 Height="40" 
-                 Width= "350"
-                 Text= "127.0.0.1"
-                 BorderThickness="5"
-                 HorizontalAlignment="Left"
-              
-             />
 
-            <TextBlock x:Name="Label4">
-                Telnet Port:
-            </TextBlock>
-            <TextBox x:Name="TelnetPort" 
-                 Height="40" 
-                 Width= "100"
-                 Text= "23"
-                 BorderThickness="5"
-                 HorizontalAlignment="Left"
-              
-             />
-
-            <!--Button x:Name="StartProcessButton" 
-            Content="Try XAP deploy (installation)" 
-            Click="StartProcess_Click"/-->
+            <Button x:Name="UpdatePeersAndSeedersInfo" 
+            Content="Update Peers and Seeders info" 
+            Click="UpdatePeersAndSeedersInfo_Click"
+                    Margin="20 20 20 20"/>
 
             <ListView x:Name="ResponseBox"
                       Height="200"
-                      Background="Blue"
+                      Background="LightBlue"
                       VerticalContentAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       HorizontalAlignment="Stretch"
